@@ -1,0 +1,44 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ADMIN</title>
+    <style>
+        #text {
+            display: none;
+            font-size: 20px;
+            color: white;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 8px 16px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body style="background: linear-gradient(to right, #141e30, #243b55);color:white;font-family:Arial;font-size:20px;text-align:center;">
+    <h1>ADMIN</h1>
+    <button style="padding:10px 20px; font-size:18px;" onclick="toggleText()">Button</button>
+    <button style="padding:10px 20px; font-size:18px;" onclick="window.location.href='https://fits-evaluation-witnesses-alike.trycloudflare.com/home.html'">
+        Come back to HOME
+    </button>
+
+    <div id="text">sever web laboratory - create by kali linux</div>
+
+    <script>
+        function toggleText() {
+            var text = document.getElementById("text");
+            
+            if (text.style.display === "none") {
+                text.style.display = "block";
+            } else {
+                text.style.display = "none";
+            }
+        }
+    </script>
+
+</body>
+</html>
