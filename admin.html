@@ -13,6 +13,7 @@
     <li><a href="https://weblab-sigma.vercel.app/backup.html">Backup</a></li>
     <li><a href="https://weblab-sigma.vercel.app/login.html">Login</a></li>
     <li><a href="https://weblab-sigma.vercel.app/index.html">Introduce</a></li>
+    <li><button onclick="logout()">Logout</button></li>
   </ul>
 </nav>
 <body style="background: linear-gradient(to right, #141e30, #243b55);color:white;font-family:Arial;font-size:30px;text-align:center;">
@@ -50,7 +51,25 @@
                 }
             });
         });
+        function logout(){
+            localStorage.removeItem("access");
+            alert("Logged out");
+            window.location.href = "index.html";
+        }
     </script>
-
+    <div class="dashboard">
+        <div class="card">
+            <h2>Users</h2>
+            <p>152</p>
+        </div>
+        <div class="card">
+            <h2>Uploads</h2>
+            <p>37</p>
+        </div>
+        <div class="card">
+            <h2>System Status</h2>
+            <p>Online ✅</p>
+        </div>
+    </div>
 </body>
 </html>
