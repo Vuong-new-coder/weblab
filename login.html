@@ -2,67 +2,38 @@
 <html>
 <head>
     <title>Login</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #1e1e2f, #2c2c54);
-            color: white;
-            text-align: center;
-        }
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(0,0,0,0.3);
-            padding: 15px 40px;
-        }
-        nav ul {
-            list-style: none;
-            display: flex;
-            gap: 20px;
-        }
-        nav a {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        nav a:hover {
-            color: #00d4ff;
-        }
-        .logo {
-            font-size: 20px;
-            font-weight: bold;
-        }
-        h1 {
-            margin-top: 100px;
-            font-size: 40px;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <nav>
-  <div class="logo">WebLab</div>
-  <ul>
-    <li><a href="https://weblab-sigma.vercel.app/home.html">Home</a></li>
-    <li><a href="https://weblab-sigma.vercel.app/admin.html">Admin</a></li>
-    <li><a href="https://weblab-sigma.vercel.app/backup.html">Backup</a></li>
-    <li><a href="https://weblab-sigma.vercel.app/login.html">Login</a></li>
-    <li><a href="https://weblab-sigma.vercel.app/index.html">Introduce</a></li>
-  </ul>
+    <div class="logo">WebLab</div>
+    <ul>
+        <li><a href="https://weblab-sigma.vercel.app/home.html">Home</a></li>
+        <li><a href="https://weblab-sigma.vercel.app/admin.html">Admin</a></li>
+        <li><a href="https://weblab-sigma.vercel.app/backup.html">Backup</a></li>
+        <li><a href="https://weblab-sigma.vercel.app/login.html">Login</a></li>
+        <li><a href="https://weblab-sigma.vercel.app/index.html">Introduce</a></li>
+    </ul>
 </nav>
 <body style="background: linear-gradient(to right, #141e30, #243b55); color:white;font-size:30px;">
     <h2>Login Page</h2>
-    <form onsubmit="fakeLogin(event)">
-        <input type="text" id="username" placeholder="Username"><br><br>
-        <input type="password" id="password" placeholder="Password"><br><br>
-        <button type="submit">Login</button>
-    </form>
+        <form onsubmit="fakeLogin(event)">
+            <input type="text" id="username" placeholder="Username"><br><br>
+            <input type="password" id="password" placeholder="Password"><br><br>
+            <button type="submit">Login</button>
+        </form>
     <script>
         function fakeLogin(event) {
-            event.preventDefault();
-            alert("Login successful (simulation only)");
+        event.preventDefault();
+        const user = document.getElementById("username").value;
+        const pass = document.getElementById("password").value;
+        if(user === "admin" && pass === "1234"){
+            alert("Welcome Admin 🔥");
+            localStorage.setItem("access", "granted");
             window.location.href = "admin.html";
+        } else {
+            alert("Wrong credentials ❌");
         }
+    }  
     </script>
 </body>
 </html>
