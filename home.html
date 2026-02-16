@@ -15,7 +15,14 @@
   </ul>
 </nav>
 <body style="background: linear-gradient(to right, #141e30, #243b55); color:white;font-size:30px;">
-    <h1>Welcome to my weblab</h1>
+    <h1 id="title">Welcome to my weblab</h1>
     <p>This is a test website.</p>
+    <script>
+      document.getElementById("title").style.opacity = 0;
+      setTimeout(() => {
+        document.getElementById("title").style.transition = "1s";
+        document.getElementById("title").style.opacity = 1;
+      }, 500);
+    </script>
 </body>
 </html>

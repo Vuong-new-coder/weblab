@@ -15,6 +15,13 @@
   </ul>
 </nav>
 <body style="background: linear-gradient(to right, #141e30, #243b55); color:white; font-family:Arial; font-size:30px; text-align:center;">
-    <h1 style="font-size:42px;">!!!Don't have any things to backup!!!</h1>
+    <h1 style="font-size:42px;" id="title">!!!Don't have any things to backup!!!</h1>
+    <script>
+      document.getElementById("title").style.opacity = 0;
+      setTimeout(() => {
+        document.getElementById("title").style.transition = "1s";
+        document.getElementById("title").style.opacity = 1;
+      }, 500);
+    </script>
 </body>
 </html>

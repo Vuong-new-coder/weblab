@@ -15,7 +15,7 @@
     </ul>
 </nav>
 <body style="background: linear-gradient(to right, #141e30, #243b55); color:white;font-size:30px;">
-    <h2>Login Page</h2>
+    <h1 id="title">Login Page</h1>
         <form onsubmit="fakeLogin(event)">
             <input type="text" id="username" placeholder="Username"><br><br>
             <input type="password" id="password" placeholder="Password"><br><br>
@@ -23,17 +23,22 @@
         </form>
     <script>
         function fakeLogin(event) {
-        event.preventDefault();
-        const user = document.getElementById("username").value;
-        const pass = document.getElementById("password").value;
-        if(user === "admin" && pass === "1234"){
-            alert("Welcome Admin 🔥");
-            localStorage.setItem("access", "granted");
-            window.location.href = "admin.html";
-        } else {
-            alert("Wrong credentials ❌");
+            event.preventDefault();
+            const user = document.getElementById("username").value;
+            const pass = document.getElementById("password").value;
+            if(user === "admin" && pass === "1234"){
+                alert("Welcome Admin 🔥");
+                localStorage.setItem("access", "granted");
+                window.location.href = "admin.html";
+            } else {
+                alert("Wrong credentials ❌");
+            }
         }
-    }  
+        document.getElementById("title").style.opacity = 0;
+        setTimeout(() => {
+            document.getElementById("title").style.transition = "1s";
+            document.getElementById("title").style.opacity = 1;
+        }, 500);
     </script>
 </body>
 </html>
