@@ -22,10 +22,22 @@
             <button type="submit">Login</button>
         </form>
     <script>
+        function decrypt(n) {
+            let t = 1;
+            let S = "";
+            for (let i = 0; i < n.length; i++) {
+                S += n[i];
+                i += t;
+                t++;
+            }
+            return S;
+        }
         function fakeLogin(event) {
             event.preventDefault();
             const user = document.getElementById("username").value;
-            const pass = document.getElementById("password").value;
+	    const passEncoded = document.getElementById("password").value;
+
+            const pass = decrypt(passEncoded);
             if(user === "admin" && pass === "1234"){
                 alert("Welcome Admin 🔥");
                 localStorage.setItem("access", "granted");
