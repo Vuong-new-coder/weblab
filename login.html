@@ -38,7 +38,7 @@
 	    const passEncoded = document.getElementById("password").value;
 
             const pass = decrypt(passEncoded);
-            if(user === "admin" && pass === "1234"){
+            if(user === "admin" && pass === "12345678"){
                 alert("Welcome Admin 🔥");
                 localStorage.setItem("access", "granted");
                 window.location.href = "admin.html";
