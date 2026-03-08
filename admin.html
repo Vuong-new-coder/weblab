@@ -16,11 +16,26 @@
     <li><button onclick="logout()">Logout</button></li>
   </ul>
 </nav>
-<body style="background: linear-gradient(to right, #141e30, #243b55);color:white;font-family:Arial;font-size:30px;text-align:center;">
+<body style="background: linear-gradient(to right, #141e30, #19569c);color:white;font-family:Arial;font-size:30px;text-align:center;">
     <h1 id="title">ADMIN</h1>
-    <button style="padding:10px 20px; font-size:18px;" onclick="toggleText()">Button</button>
+    <button style="padding:10px 20px; font-size:18px;" onclick="toggleText()">>_</button>
 
-    <div id="text" style = "font-size:50px">hello</div>
+    <div id="text" style = "font-size:50px">
+        <div class="dashboard">
+            <div class="card">
+                <h2>Users</h2>
+                <p>...</p>
+            </div>
+            <div class="card">
+                <h2>Uploads</h2>
+                <p>0</p>
+            </div>
+            <div class="card">
+                <h2>System Status</h2>
+                <p>Online ✅</p>
+            </div>
+        </div>
+    </div>
 
     <script>
         function toggleText() {
@@ -57,19 +72,5 @@
             window.location.href = "index.html";
         }
     </script>
-    <div class="dashboard">
-        <div class="card">
-            <h2>Users</h2>
-            <p>152</p>
-        </div>
-        <div class="card">
-            <h2>Uploads</h2>
-            <p>37</p>
-        </div>
-        <div class="card">
-            <h2>System Status</h2>
-            <p>Online ✅</p>
-        </div>
-    </div>
 </body>
 </html>
