@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Lab</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<div id="content"></div>
+<body style="background: linear-gradient(to right, #141e30, #19569c);color:white;font-family:Arial;font-size:30px;text-align:center;">
+  <nav>
+    <div class="logo">WebLab</div>
+    <ul>
+      <li><a href="https://weblab-sigma.vercel.app/home.html">Home</a></li>
+      <li><a href="https://weblab-sigma.vercel.app/admin.html">Admin</a></li>
+      <li><a href="https://weblab-sigma.vercel.app/backup.html">Backup</a></li>
+      <li><a href="https://weblab-sigma.vercel.app/login.html">Login</a></li>
+      <li><a href="https://weblab-sigma.vercel.app/index.html">Introduce</a></li>
+    </ul>
+  </nav>
+  <h1 style="font-size:70px" id="title">OHHH!</h1>
+  <h1 id="title">You have not logged in yet</h1>
+  <h1 id="title">Please login now</h1>
+  <script>
+    document.getElementById("title").style.opacity = 0;
+    setTimeout(() => {
+      document.getElementById("title").style.transition = "1s";
+      document.getElementById("title").style.opacity = 1;
+    }, 500);
+    document.addEventListener("DOMContentLoaded", () => {
+      document.body.classList.add("loaded");
+    });
+    document.querySelectorAll("a").forEach(link => {
+      link.addEventListener("click", function(e) {
+        if (this.href && this.target !== "_blank") {
+          e.preventDefault();
+          document.body.classList.remove("loaded");
+          setTimeout(() => {
+            window.location = this.href;
+          }, 300);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
