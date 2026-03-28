@@ -13,10 +13,16 @@
     <li><a href="https://weblab-sigma.vercel.app/backup.html">Backup</a></li>
     <li><a href="https://weblab-sigma.vercel.app/login.html">Login</a></li>
     <li><a href="https://weblab-sigma.vercel.app/index.html">Introduce</a></li>
+    <li><a href="https://weblab-sigma.vercel.app/uploads.html">Uploads</a></li>
     <li><button onclick="logout()">Logout</button></li>
   </ul>
 </nav>
 <body style="background: linear-gradient(to right, #141e30, #19569c);color:white;font-family:Arial;font-size:30px;text-align:center;">
+    <script>
+        if(localStorage.getItem("access") !== "granted"){
+            window.location.href = "nologin.html";
+        }
+    </script>
     <h1 id="title">ADMIN</h1>
     <button style="padding:10px 20px; font-size:18px;" onclick="toggleText()">>_</button>
 
@@ -52,9 +58,6 @@
             document.getElementById("title").style.transition = "1s";
             document.getElementById("title").style.opacity = 1;
         }, 500);
-        if(localStorage.getItem("access") !== "granted"){
-            window.location.href = "nologin.html";
-        }
         document.addEventListener("DOMContentLoaded", () => {
             document.body.classList.add("loaded");
         });
