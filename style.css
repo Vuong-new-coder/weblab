@@ -96,3 +96,22 @@ nav button:hover {
   height: auto !important;    
   margin: 0 auto;      
 }
+
+.image-container {
+    width: 90%;           
+    max-width: 800px;     
+    margin: 20px auto;   
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1); 
+    border-radius: 15px; 
+    text-align: center;  
+}
+
+img {
+    max-width: 100%;      
+    height: auto;         
+    display: block;       
+    margin: 0 auto;       
+    border-radius: 10px; 
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); 
+}
