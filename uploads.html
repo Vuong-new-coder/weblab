@@ -1,132 +1,74 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
+  <head>
     <title>My Lab - Uploads</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
     <style>
-        /* Thêm một chút CSS để ảnh hiện ra đẹp hơn */
-        #gallery img { width: 200px; margin: 10px; border-radius: 10px; border: 2px solid white; }
-        .upload-box { margin: 20px; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 10px; }
+      /* Thêm một chút CSS để ảnh hiện ra đẹp hơn */
+      #gallery img {
+        width: 200px;
+        margin: 10px;
+        border-radius: 10px;
+        border: 2px solid white;
+      }
+      .upload-box {
+        margin: 20px;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+      }
     </style>
-</head>
-<nav>
+  </head>
+  <nav>
     <div class="logo">WebLab</div>
     <ul>
-        <li><a href="https://weblab-sigma.vercel.app/home.html">Home</a></li>
-        <li><a href="https://weblab-sigma.vercel.app/admin.html">Admin</a></li>
-        <li><a href="https://weblab-sigma.vercel.app/backup.html">Backup</a></li>
-        <li><a href="https://weblab-sigma.vercel.app/login.html">Login</a></li>
-        <li><a href="https://weblab-sigma.vercel.app/index.html">Introduce</a></li>
-        <li><a href="https://weblab-sigma.vercel.app/uploads.html">Uploads</a></li>
+      <li><a href="https://weblab-sigma.vercel.app/home.html">Home</a></li>
+      <li><a href="https://weblab-sigma.vercel.app/admin.html">Admin</a></li>
+      <li><a href="https://weblab-sigma.vercel.app/backup.html">Backup</a></li>
+      <li><a href="https://weblab-sigma.vercel.app/login.html">Login</a></li>
+      <li><a href="https://weblab-sigma.vercel.app/index.html">Introduce</a></li>
+      <li><a href="https://weblab-sigma.vercel.app/uploads.html">Uploads</a></li>
     </ul>
-</nav>
-<body style="background: linear-gradient(to right, #141e30, #19569c); color:white; font-family:Arial; font-size:25px; text-align:center;">
+  </nav>
+  <body
+    style="
+      background: linear-gradient(to right, #141e30, #19569c);
+      color: white;
+      font-family: Arial;
+      font-size: 25px;
+      text-align: center;
+    "
+  >
     <h1 id="page-title">Uploads</h1>
-
-    <div class="upload-box">
-        <input type="file" id="fileInput" accept="image/*">
-        <button onclick="handleUpload()" id="btnUpload">Upload file</button>
-        <p id="status" style="font-size: 16px;"></p>
-    </div>
-
-    <div id="gallery">
-        </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
-        import { getFirestore, collection, addDoc, query, onSnapshot, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyB9hTaNKRFxti4XyfaCd8JH-pIe2F3Sgw0",
-            authDomain: "weblab-548ab.firebaseapp.com",
-            projectId: "weblab-548ab",
-            storageBucket: "weblab-548ab.firebasestorage.app",
-            messagingSenderId: "721720697521",
-            appId: "1:721720697521:web:fcdb132b846dd0fb15b890",
-            measurementId: "G-87RQZZMXQX"
-        };
-
-        // Khởi tạo Firebase
-        const app = initializeApp(firebaseConfig);
-        const storage = getStorage(app);
-        const db = getFirestore(app);
-
-        // Hàm Upload File (Gắn vào window để button onclick có thể gọi được)
-        window.handleUpload = async () => {
-            const fileInput = document.getElementById("fileInput");
-            const status = document.getElementById("status");
-            const btn = document.getElementById("btnUpload");
-
-            if (fileInput.files.length === 0) return alert("Choose file to upload!");
-
-            const file = fileInput.files[0];
-            btn.disabled = true;
-            status.innerText = "Uploading ... please wait!";
-
-            try {
-                const storageRef = ref(storage, 'gallery/' + Date.now() + "_" + file.name);
-                await uploadBytes(storageRef, file);
-                const url = await getDownloadURL(storageRef);
-
-                await addDoc(collection(db, "user_uploads"), {
-                    imageUrl: url,
-                    timestamp: new Date()
-                });
-
-                status.innerText = "Upload successfully!";
-                fileInput.value = ""; 
-            } catch (e) {
-                console.error(e);
-                status.innerText = "ERROR: " + e.message;
-            } finally {
-                btn.disabled = false;
-            }
-        };
-
-        // Hiển thị ảnh thời gian thực
-        const q = query(collection(db, "user_uploads"), orderBy("timestamp", "desc"));
-        onSnapshot(q, (snapshot) => {
-            const gallery = document.getElementById("gallery");
-            gallery.innerHTML = ""; 
-            snapshot.forEach((doc) => {
-                const data = doc.data();
-                const img = document.createElement("img");
-                img.src = data.imageUrl;
-                gallery.appendChild(img);
-            });
-        });
-    </script>
-
+    <img scr="revuelto.png" alt="lamboghini revuelto" />
     <script>
-        // Kiểm tra quyền truy cập ngay lập tức
-        if(localStorage.getItem("access") !== "granted"){
-            window.location.href = "nologin.html";
-        }
-
-        document.getElementById("title").style.opacity = 0;
-        setTimeout(() => {
-            document.getElementById("title").style.transition = "1s";
-            document.getElementById("title").style.opacity = 1;
-        }, 500);
-        if(localStorage.getItem("access") !== "granted"){
-            alert("Access Denied");
-            window.location.href = "index.html";
-        }
-        document.addEventListener("DOMContentLoaded", () => {
-            document.body.classList.add("loaded");
+      // Kiểm tra quyền truy cập ngay lập tức
+      if (localStorage.getItem("access") !== "granted") {
+        window.location.href = "nologin.html";
+      }
+      document.getElementById("title").style.opacity = 0;
+      setTimeout(() => {
+        document.getElementById("title").style.transition = "1s";
+        document.getElementById("title").style.opacity = 1;
+      }, 500);
+      if (localStorage.getItem("access") !== "granted") {
+        alert("Access Denied");
+        window.location.href = "index.html";
+      }
+      document.addEventListener("DOMContentLoaded", () => {
+        document.body.classList.add("loaded");
+      });
+      document.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", function (e) {
+          if (this.href && this.target !== "_blank") {
+            e.preventDefault();
+            document.body.classList.remove("loaded");
+            setTimeout(() => {
+              window.location = this.href;
+            }, 300);
+          }
         });
-        document.querySelectorAll("a").forEach(link => {
-            link.addEventListener("click", function(e) {
-                if (this.href && this.target !== "_blank") {
-                    e.preventDefault();
-                    document.body.classList.remove("loaded");
-                    setTimeout(() => {
-                        window.location = this.href;
-                    }, 300);
-                }
-            });
-        });
+      });
     </script>
-</body>
+  </body>
 </html>
