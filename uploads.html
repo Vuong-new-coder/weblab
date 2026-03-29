@@ -1,74 +1,47 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-  <head>
-    <title>My Lab - Uploads</title>
-    <link rel="stylesheet" href="style.css" />
-    <style>
-      /* Thêm một chút CSS để ảnh hiện ra đẹp hơn */
-      #gallery img {
-        width: 200px;
-        margin: 10px;
-        border-radius: 10px;
-        border: 2px solid white;
-      }
-      .upload-box {
-        margin: 20px;
-        padding: 20px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 10px;
-      }
-    </style>
-  </head>
-  <nav>
+<head>
+    <title>Uploads</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<nav>
     <div class="logo">WebLab</div>
     <ul>
-      <li><a href="https://weblab-sigma.vercel.app/home.html">Home</a></li>
-      <li><a href="https://weblab-sigma.vercel.app/admin.html">Admin</a></li>
-      <li><a href="https://weblab-sigma.vercel.app/backup.html">Backup</a></li>
-      <li><a href="https://weblab-sigma.vercel.app/login.html">Login</a></li>
-      <li><a href="https://weblab-sigma.vercel.app/index.html">Introduce</a></li>
-      <li><a href="https://weblab-sigma.vercel.app/uploads.html">Uploads</a></li>
+        <li><a href="https://weblab-sigma.vercel.app/home.html">Home</a></li>
+        <li><a href="https://weblab-sigma.vercel.app/admin.html">Admin</a></li>
+        <li><a href="https://weblab-sigma.vercel.app/backup.html">Backup</a></li>
+        <li><a href="https://weblab-sigma.vercel.app/login.html">Login</a></li>
+        <li><a href="https://weblab-sigma.vercel.app/index.html">Introduce</a></li>
+        <li><a href="https://weblab-sigma.vercel.app/uploads.html">Uploads</a></li>
     </ul>
-  </nav>
-  <body
-    style="
-      background: linear-gradient(to right, #141e30, #19569c);
-      color: white;
-      font-family: Arial;
-      font-size: 25px;
-      text-align: center;
-    "
-  >
-    <h1 id="page-title">Uploads</h1>
-    <img scr="revuelto.png" alt="lamboghini revuelto" />
+</nav>
+<body style="background: linear-gradient(to right, #141e30, #19569c);color:white;font-family:Arial;font-size:30px;text-align:center;">
+    <h1 id="title">UPLOADS</h1>
+    <p>where you can only see that what admin shared</p>
+    <img scr="revuelto.png" alt="lamborghini revuelto">
     <script>
-      // Kiểm tra quyền truy cập ngay lập tức
-      if (localStorage.getItem("access") !== "granted") {
-        window.location.href = "nologin.html";
-      }
-      document.getElementById("title").style.opacity = 0;
-      setTimeout(() => {
-        document.getElementById("title").style.transition = "1s";
-        document.getElementById("title").style.opacity = 1;
-      }, 500);
-      if (localStorage.getItem("access") !== "granted") {
-        alert("Access Denied");
-        window.location.href = "index.html";
-      }
-      document.addEventListener("DOMContentLoaded", () => {
-        document.body.classList.add("loaded");
-      });
-      document.querySelectorAll("a").forEach((link) => {
-        link.addEventListener("click", function (e) {
-          if (this.href && this.target !== "_blank") {
-            e.preventDefault();
-            document.body.classList.remove("loaded");
-            setTimeout(() => {
-              window.location = this.href;
-            }, 300);
-          }
+        document.getElementById("title").style.opacity = 0;
+        setTimeout(() => {
+            document.getElementById("title").style.transition = "1s";
+            document.getElementById("title").style.opacity = 1;
+        }, 500);
+        if(localStorage.getItem("access") !== "granted"){
+            window.location.href = "nologin.html";
+        }
+        document.addEventListener("DOMContentLoaded", () => {
+            document.body.classList.add("loaded");
         });
-      });
+        document.querySelectorAll("a").forEach(link => {
+            link.addEventListener("click", function(e) {
+                if (this.href && this.target !== "_blank") {
+                    e.preventDefault();
+                    document.body.classList.remove("loaded");
+                    setTimeout(() => {
+                        window.location = this.href;
+                    }, 300);
+                }
+            });
+        });
     </script>
-  </body>
+</body>
 </html>
