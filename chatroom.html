@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chat room</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css">
+</head>
+<div id="content"></div>
+<body style="background: linear-gradient(to right, #141e30, #19569c);color:white;font-family:Arial;font-size:30px;text-align:center;">
+  <nav>
+    <div class="logo">WebLab</div>
+    <ul>
+      <li><a href="https://weblab-sigma.vercel.app/home.html">Home</a></li>
+      <li><a href="https://weblab-sigma.vercel.app/admin.html">Admin</a></li>
+      <li><a href="https://weblab-sigma.vercel.app/backup.html">Backup</a></li>
+      <li><a href="https://weblab-sigma.vercel.app/login.html">Login</a></li>
+      <li><a href="https://weblab-sigma.vercel.app/index.html">Introduce</a></li>
+      <li><a href="https://weblab-sigma.vercel.app/uploads.html">Uploads</a></li>
+    </ul>
+  </nav>
+  
+    <div class="chat-wrap">
+ 
+    <!-- ══════════════ LOGIN ══════════════ -->
+    <div id="login-screen">
+        <h2>💬 Chat Online</h2>
+        <p>Nhập tên của bạn để bắt đầu</p>
+        <input type="text" id="username-input" placeholder="Tên hiển thị (vd: An, Bình…)" maxlength="20"/>
+        <input type="text" id="room-input" placeholder="Tên phòng (vd: nhom-chung)" maxlength="30"/>
+        <button onclick="joinChat()">Vào phòng chat →</button>
+    </div>
+ 
+    <!-- ══════════════ CHAT APP ══════════════ -->
+    <div id="chat-app">
+        <div class="chat-wrap">
+            <div class="sidebar">
+                <div class="sidebar-header">Phòng chat</div>
+                <div class="room-list">
+                    <div class="room active">
+                        <span class="room-dot dot-green"></span>
+                        <span class="room-name" id="sidebar-room-name">nhom-chung</span>
+                    </div>
+                </div>
+                <div class="sidebar-footer">
+                    <div class="my-avatar" id="my-avatar-sidebar">?</div>
+                    <div>
+                        <div class="my-name" id="my-name-display">Bạn</div>
+                        <div class="my-status">● Đang online</div>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-main">
+                <div class="chat-header">
+                    <span class="header-dot"></span>
+                    <span class="header-title" id="room-title">nhom-chung</span>
+                    <span class="header-sub" id="online-count">Đang kết nối…</span>
+                </div>
+                <div class="conn-status" id="conn-status">Mất kết nối – đang thử lại…</div>
+                <div class="messages" id="msgs">
+                    <div class="date-divider">Hôm nay</div>
+                </div>
+                <div class="input-bar">
+                    <input type="text" id="inp" placeholder="Nhắn tin…" disabled/>
+                    <button class="send-btn" onclick="sendMsg()" id="send-btn" disabled>
+                        <svg viewBox="0 0 20 20" width="16" height="16" fill="none">
+                            <path d="M2.5 10 17 3l-5 7 5 7-14.5-7z" fill="#fff"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="module">
+        import { initializeApp }           from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, push, onChildAdded, serverTimestamp, onValue, set, onDisconnect }
+            from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+    
+    const firebaseConfig = {
+        apiKey: "AIzaSyB9hTaNKRFxti4XyfaCd8JH-pIe2F3Sgw0",
+        authDomain: "weblab-548ab.firebaseapp.com",
+        projectId: "weblab-548ab",
+        storageBucket: "weblab-548ab.firebasestorage.app",
+        messagingSenderId: "721720697521",
+        appId: "1:721720697521:web:fcdb132b846dd0fb15b890",
+        measurementId: "G-87RQZZMXQX"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db  = getDatabase(app);
+ 
+    let currentUser = '';
+    let currentRoom = '';
+    let messagesRef, presenceRef;
+ 
+    /* ── JOIN ── */
+    window.joinChat = function() {
+        const nameInput = document.getElementById('username-input').value.trim();
+        const roomInput = document.getElementById('room-input').value.trim().replace(/\s+/g,'-').toLowerCase() || 'nhom-chung';
+        if (!nameInput) { alert('Vui lòng nhập tên!'); return; }
+ 
+        currentUser = nameInput;
+        currentRoom = roomInput;
+ 
+        document.getElementById('login-screen').style.display  = 'none';
+        document.getElementById('chat-app').style.display      = 'block';
+        document.getElementById('sidebar-room-name').textContent = currentRoom;
+        document.getElementById('room-title').textContent       = currentRoom;
+        document.getElementById('my-name-display').textContent  = currentUser;
+        document.getElementById('my-avatar-sidebar').textContent = initials(currentUser);
+        document.getElementById('inp').disabled      = false;
+        document.getElementById('send-btn').disabled = false;
+        document.getElementById('inp').focus();
+ 
+        setupFirebase();
+    };
+ 
+    /* ── FIREBASE SETUP ── */
+    function setupFirebase() {
+        // 1. Lắng nghe tin nhắn mới
+        messagesRef = ref(db, `rooms/${currentRoom}/messages`);
+        onChildAdded(messagesRef, snap => {
+            const data = snap.val();
+            renderMessage(data);
+        });
+ 
+        // 2. Presence – đếm người online
+        presenceRef = ref(db, `rooms/${currentRoom}/presence/${currentUser}`);
+        set(presenceRef, { name: currentUser, online: true });
+        onDisconnect(presenceRef).remove();
+ 
+        const presenceListRef = ref(db, `rooms/${currentRoom}/presence`);
+        onValue(presenceListRef, snap => {
+            const count = snap.exists() ? Object.keys(snap.val()).length : 0;
+            document.getElementById('online-count').textContent = count + ' người online';
+        });
+ 
+        // 3. Trạng thái kết nối
+        const connRef = ref(db, '.info/connected');
+        onValue(connRef, snap => {
+            const status = document.getElementById('conn-status');
+            if (snap.val() === true) {
+                status.classList.remove('offline');
+            } else {
+                status.classList.add('offline');
+            }
+        });
+    }
+ 
+    /* ── GỬI TIN NHẮN ── */
+    window.sendMsg = function() {
+        const inp = document.getElementById('inp');
+        const val = inp.value.trim();
+        if (!val || !messagesRef) return;
+ 
+        push(messagesRef, {
+            user: currentUser,
+            text: val,
+            ts:   serverTimestamp()
+        });
+        inp.value = '';
+        inp.focus();
+    };
+ 
+    /* ── RENDER ── */
+    let lastUser = '';
+    function renderMessage(data) {
+        const msgs   = document.getElementById('msgs');
+        const isMe   = data.user === currentUser;
+        const time   = data.ts ? formatTime(data.ts) : '--:--';
+        const showName = !isMe && data.user !== lastUser;
+        lastUser = data.user;
+ 
+        const div = document.createElement('div');
+        div.className = 'msg' + (isMe ? ' me' : '');
+        div.innerHTML = `
+            <div class="avatar ${isMe ? 'av-me' : 'av-other'}">${initials(data.user)}</div>
+            <div class="msg-col">
+                ${showName ? `<div class="sender-name">${esc(data.user)}</div>` : ''}
+            <div class="bubble">${esc(data.text)}</div>
+            <div class="meta">${time}</div>
+        </div>`;
+        msgs.appendChild(div);
+        msgs.scrollTop = msgs.scrollHeight;
+    }
+ 
+    /* ── HELPERS ── */
+    function initials(name) {
+        return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
+    }
+    function esc(str) {
+        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+    function formatTime(ts) {
+        const d = new Date(ts);
+        return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+    }
+ 
+    /* Enter để gửi */
+    document.getElementById('inp').addEventListener('keydown', e => {
+        if (e.key === 'Enter') window.sendMsg();
+    });
+    document.getElementById('username-input').addEventListener('keydown', e => {
+        if (e.key === 'Enter') document.getElementById('room-input').focus();
+    });
+    document.getElementById('room-input').addEventListener('keydown', e => {
+        if (e.key === 'Enter') window.joinChat();
+    });
+    </script>
+
+  <script>
+    document.getElementById("title").style.opacity = 0;
+    setTimeout(() => {
+      document.getElementById("title").style.transition = "1s";
+      document.getElementById("title").style.opacity = 1;
+    }, 500);
+    document.addEventListener("DOMContentLoaded", () => {
+      document.body.classList.add("loaded");
+    });
+    document.querySelectorAll("a").forEach(link => {
+      link.addEventListener("click", function(e) {
+        if (this.href && this.target !== "_blank") {
+          e.preventDefault();
+          document.body.classList.remove("loaded");
+          setTimeout(() => {
+            window.location = this.href;
+          }, 300);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
