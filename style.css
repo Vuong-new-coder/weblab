@@ -87,17 +87,17 @@ nav button {
 }
 
 nav button:hover {
-  color: #00f2fe;
+  color: #00f2ff;
   transform: scale(1.05);
 }
-
+/*
 .reponsive-img {
   display: block;      
   max-width: 100% !important; 
   height: auto !important;    
   margin: 0 auto;      
 }
-
+*/
 .image-container {
     width: 90%;           
     max-width: 800px;     
