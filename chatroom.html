@@ -1,13 +1,56 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html>
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Chat room</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* Chỉ những thứ CHƯA có trong style.css */
+
+    /* Layout wrapper */
+    #chat-wrapper { width: 90%; margin: 30px auto 40px; }
+
+    /* Chat app ẩn mặc định */
+    #chat-app { display: none; }
+
+    /* Chat wrap: width 100% của wrapper, height auto */
+    .chat-wrap {
+      width: 100%;
+      height: auto;
+      min-height: 560px;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    /* Sidebar cần flex-shrink để không bị ép */
+    .sidebar { flex-shrink: 0; }
+
+    /* Messages cần min-height để không bị xẹp */
+    .messages { min-height: 380px; }
+
+    /* Connection status (chưa có trong style.css) */
+    .conn-status { font-size: 11px; padding: 4px 10px; text-align: center; display: none; }
+    .conn-status.offline { display: block; background: #fff3e0; color: #e65100; }
+
+    /* Login screen: ghi đè lại màu nền cho khớp gradient */
+    #login-screen {
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.15);
+      margin: 0 auto;
+    }
+    #login-screen h2 { color: #fff; }
+    #login-screen p  { color: rgba(255,255,255,0.6); }
+    #login-screen input {
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+    }
+    #login-screen input::placeholder { color: rgba(255,255,255,0.4); }
+    #login-screen input:focus { border-color: #a78bfa; background: rgba(255,255,255,0.15); }
+  </style>
 </head>
-<body style="background: linear-gradient(to right, #141e30, #19569c); color:white; font-family:Arial; font-size:30px; text-align:center;">
+
+<body>
+  <div id="content"></div>
 
   <nav>
     <div class="logo">WebLab</div>
@@ -21,59 +64,64 @@
       <li><a href="https://weblab-sigma.vercel.app/chatroom.html">Chat</a></li>
     </ul>
   </nav>
-  <p style="font-size: 50px">cre: claude.ai</p>
-  <!-- ══════════════ LOGIN ══════════════ -->
-  <div id="login-screen">
-    <h2>💬 Chat Online</h2>
-    <p>Nhập tên của bạn để bắt đầu</p>
-    <input type="text" id="username-input" placeholder="Tên hiển thị (vd: An, Bình…)" maxlength="20"/>
-    <input type="text" id="room-input" placeholder="Tên phòng (vd: nhom-chung)" maxlength="30"/>
-    <button onclick="joinChat()">Vào phòng chat →</button>
-  </div>
 
-  <!-- ══════════════ CHAT APP ══════════════ -->
-  <div id="chat-app" style="display:none;">
-    <div class="chat-wrap">
-      <div class="sidebar">
-        <div class="sidebar-header">Phòng chat</div>
-        <div class="room-list">
-          <div class="room active">
-            <span class="room-dot dot-green"></span>
-            <span class="room-name" id="sidebar-room-name">nhom-chung</span>
+  <!-- ══════════ CHAT WRAPPER ══════════ -->
+  <div id="chat-wrapper">
+
+    <!-- LOGIN -->
+    <div id="login-screen">
+      <h2>💬 Chat Online</h2>
+      <p>Nhập tên của bạn để bắt đầu</p>
+      <input type="text" id="username-input" placeholder="Tên hiển thị (vd: An, Bình…)" maxlength="20"/>
+      <input type="text" id="room-input" placeholder="Tên phòng (vd: nhom-chung)" maxlength="30"/>
+      <button onclick="joinChat()">Vào phòng chat →</button>
+    </div>
+
+    <!-- CHAT APP -->
+    <div id="chat-app">
+      <div class="chat-wrap">
+        <div class="sidebar">
+          <div class="sidebar-header">Phòng chat</div>
+          <div class="room-list">
+            <div class="room active">
+              <span class="room-dot dot-green"></span>
+              <span class="room-name" id="sidebar-room-name">nhom-chung</span>
+            </div>
+          </div>
+          <div class="sidebar-footer">
+            <div class="my-avatar" id="my-avatar-sidebar">?</div>
+            <div>
+              <div class="my-name" id="my-name-display">Bạn</div>
+              <div class="my-status">● Đang online</div>
+            </div>
           </div>
         </div>
-        <div class="sidebar-footer">
-          <div class="my-avatar" id="my-avatar-sidebar">?</div>
-          <div>
-            <div class="my-name" id="my-name-display">Bạn</div>
-            <div class="my-status">● Đang online</div>
-          </div>
-        </div>
-      </div>
 
-      <div class="chat-main">
-        <div class="chat-header">
-          <span class="header-dot"></span>
-          <span class="header-title" id="room-title">nhom-chung</span>
-          <span class="header-sub" id="online-count">Đang kết nối…</span>
-        </div>
-        <div class="conn-status" id="conn-status">Mất kết nối – đang thử lại…</div>
-        <div class="messages" id="msgs">
-          <div class="date-divider">Hôm nay</div>
-        </div>
-        <div class="input-bar">
-          <input type="text" id="inp" placeholder="Nhắn tin…" disabled/>
-          <button class="send-btn" onclick="sendMsg()" id="send-btn" disabled>
-            <svg viewBox="0 0 20 20" width="16" height="16" fill="none">
-              <path d="M2.5 10 17 3l-5 7 5 7-14.5-7z" fill="#fff"/>
-            </svg>
-          </button>
+        <div class="chat-main">
+          <div class="chat-header">
+            <span class="header-dot"></span>
+            <span class="header-title" id="room-title">nhom-chung</span>
+            <span class="header-sub" id="online-count">Đang kết nối…</span>
+          </div>
+          <div class="conn-status" id="conn-status">Mất kết nối – đang thử lại…</div>
+          <div class="messages" id="msgs">
+            <div class="date-divider">Hôm nay</div>
+          </div>
+          <div class="input-bar">
+            <input type="text" id="inp" placeholder="Nhắn tin…" disabled/>
+            <button class="send-btn" onclick="sendMsg()" id="send-btn" disabled>
+              <svg viewBox="0 0 20 20" width="16" height="16" fill="none">
+                <path d="M2.5 10 17 3l-5 7 5 7-14.5-7z" fill="#fff"/>
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- ══════════════ FIREBASE ══════════════ -->
+  </div><!-- end #chat-wrapper -->
+
+  <!-- ══════════ FIREBASE ══════════ -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getDatabase, ref, push, onChildAdded, serverTimestamp, onValue, set, onDisconnect }
@@ -82,7 +130,7 @@
     const firebaseConfig = {
       apiKey:            "AIzaSyB9hTaNKRFxti4XyfaCd8JH-pIe2F3Sgw0",
       authDomain:        "weblab-548ab.firebaseapp.com",
-      databaseURL:       "https://weblab-548ab-default-rtdb.asia-southeast1.firebasedatabase.app", // ✅ ĐÃ THÊM
+      databaseURL:       "https://weblab-548ab-default-rtdb.asia-southeast1.firebasedatabase.app",
       projectId:         "weblab-548ab",
       storageBucket:     "weblab-548ab.firebasestorage.app",
       messagingSenderId: "721720697521",
@@ -93,28 +141,25 @@
     const app = initializeApp(firebaseConfig);
     const db  = getDatabase(app);
 
-    let currentUser = '';
-    let currentRoom = '';
-    let messagesRef, presenceRef;
+    let currentUser = '', currentRoom = '', messagesRef;
 
     window.joinChat = function() {
-      const nameInput = document.getElementById('username-input').value.trim();
-      const roomInput = document.getElementById('room-input').value.trim().replace(/\s+/g,'-').toLowerCase() || 'nhom-chung';
-      if (!nameInput) { alert('Vui lòng nhập tên!'); return; }
+      const name = document.getElementById('username-input').value.trim();
+      const room = document.getElementById('room-input').value.trim().replace(/\s+/g,'-').toLowerCase() || 'nhom-chung';
+      if (!name) { alert('Vui lòng nhập tên!'); return; }
 
-      currentUser = nameInput;
-      currentRoom = roomInput;
+      currentUser = name;
+      currentRoom = room;
 
-      document.getElementById('login-screen').style.display  = 'none';
-      document.getElementById('chat-app').style.display      = 'block';
-      document.getElementById('sidebar-room-name').textContent = currentRoom;
-      document.getElementById('room-title').textContent       = currentRoom;
-      document.getElementById('my-name-display').textContent  = currentUser;
-      document.getElementById('my-avatar-sidebar').textContent = initials(currentUser);
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('chat-app').style.display     = 'block';
+      document.getElementById('sidebar-room-name').textContent = room;
+      document.getElementById('room-title').textContent        = room;
+      document.getElementById('my-name-display').textContent   = name;
+      document.getElementById('my-avatar-sidebar').textContent = initials(name);
       document.getElementById('inp').disabled      = false;
       document.getElementById('send-btn').disabled = false;
       document.getElementById('inp').focus();
-
       setupFirebase();
     };
 
@@ -122,19 +167,17 @@
       messagesRef = ref(db, `rooms/${currentRoom}/messages`);
       onChildAdded(messagesRef, snap => renderMessage(snap.val()));
 
-      presenceRef = ref(db, `rooms/${currentRoom}/presence/${currentUser}`);
+      const presenceRef = ref(db, `rooms/${currentRoom}/presence/${currentUser}`);
       set(presenceRef, { name: currentUser, online: true });
       onDisconnect(presenceRef).remove();
 
-      const presenceListRef = ref(db, `rooms/${currentRoom}/presence`);
-      onValue(presenceListRef, snap => {
+      onValue(ref(db, `rooms/${currentRoom}/presence`), snap => {
         const count = snap.exists() ? Object.keys(snap.val()).length : 0;
         document.getElementById('online-count').textContent = count + ' người online';
       });
 
-      const connRef = ref(db, '.info/connected');
-      onValue(connRef, snap => {
-        document.getElementById('conn-status').classList.toggle('offline', snap.val() !== true);
+      onValue(ref(db, '.info/connected'), snap => {
+        document.getElementById('conn-status').classList.toggle('offline', !snap.val());
       });
     }
 
@@ -149,9 +192,9 @@
 
     let lastUser = '';
     function renderMessage(data) {
-      const msgs    = document.getElementById('msgs');
-      const isMe    = data.user === currentUser;
-      const time    = data.ts ? formatTime(data.ts) : '--:--';
+      const msgs  = document.getElementById('msgs');
+      const isMe  = data.user === currentUser;
+      const time  = data.ts ? formatTime(data.ts) : '--:--';
       const showName = !isMe && data.user !== lastUser;
       lastUser = data.user;
 
@@ -168,12 +211,8 @@
       msgs.scrollTop = msgs.scrollHeight;
     }
 
-    function initials(name) {
-      return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
-    }
-    function esc(str) {
-      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    }
+    function initials(n) { return n.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2); }
+    function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
     function formatTime(ts) {
       const d = new Date(ts);
       return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
@@ -184,7 +223,7 @@
     document.getElementById('room-input').addEventListener('keydown', e => { if(e.key==='Enter') window.joinChat(); });
   </script>
 
-  <!-- ══════════════ PAGE TRANSITION ══════════════ -->
+  <!-- ══════════ WEBLAB SCRIPT GỐC ══════════ -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       document.body.classList.add("loaded");
@@ -199,6 +238,5 @@
       });
     });
   </script>
-
 </body>
 </html>
